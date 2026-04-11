@@ -96,6 +96,7 @@ const fieldContent    = document.getElementById('field-content');
 const prefixBadge       = document.getElementById('prefix-badge');
 const prefixKey         = document.getElementById('prefix-key');
 const btnNew            = document.getElementById('btn-new');
+const btnHome           = document.getElementById('btn-home');
 const btnSave           = document.getElementById('btn-save');
 const btnDelete         = document.getElementById('btn-delete');
 const btnCopy           = document.getElementById('btn-copy');
@@ -114,6 +115,14 @@ const deleteConfirm = document.getElementById('delete-confirm');
 const deleteCancel  = document.getElementById('delete-cancel');
 
 // ---------------------------------------------------------------------------
+// Home button visibility
+// ---------------------------------------------------------------------------
+function setHomeButtonVisible(visible) {
+  if (visible) btnHome.classList.remove('hidden');
+  else         btnHome.classList.add('hidden');
+}
+
+// ---------------------------------------------------------------------------
 // Show/hide defaults page (replaces right panel)
 // ---------------------------------------------------------------------------
 function showDefaultsPage() {
@@ -123,6 +132,7 @@ function showDefaultsPage() {
   editorEmpty.classList.add('hidden');
   editorForm.classList.add('hidden');
   defaultsPage.classList.remove('hidden');
+  setHomeButtonVisible(true);
   renderDefaultsPage();
   renderList(searchInput.value);
 }
@@ -210,6 +220,7 @@ function selectMacro(index) {
   editorEmpty.classList.add('hidden');
   editorForm.classList.remove('hidden');
   defaultsPage.classList.add('hidden');
+  setHomeButtonVisible(true);
 
   fieldTitle.value = macro.title;
   fieldAbbr.value = macro.abbr;
@@ -228,6 +239,7 @@ function showEmpty() {
   editorEmpty.classList.remove('hidden');
   editorForm.classList.add('hidden');
   defaultsPage.classList.add('hidden');
+  setHomeButtonVisible(false);
   renderList(searchInput.value);
   renderHomeScreen();
 }
@@ -560,12 +572,20 @@ prefixCancel.addEventListener('click', closePrefixModal);
 prefixModal.addEventListener('click', (e) => { if (e.target === prefixModal) closePrefixModal(); });
 deleteModal.addEventListener('click', (e) => { if (e.target === deleteModal) cancelDelete(); });
 
-// Close modals / settings on Escape
+// Home button
+btnHome.addEventListener('click', () => showEmpty());
+
+// Close modals / settings on Escape; navigate home if on a sub-page
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    if (settingsOpen) closeSettings();
-    if (!prefixModal.classList.contains('hidden')) closePrefixModal();
-    if (!deleteModal.classList.contains('hidden')) cancelDelete();
+    // Modals and popovers take priority
+    if (settingsOpen) { closeSettings(); return; }
+    if (!prefixModal.classList.contains('hidden')) { closePrefixModal(); return; }
+    if (!deleteModal.classList.contains('hidden')) { cancelDelete(); return; }
+    // Navigate home if a macro or defaults page is showing
+    if (!editorForm.classList.contains('hidden') || !defaultsPage.classList.contains('hidden')) {
+      showEmpty();
+    }
   }
 });
 

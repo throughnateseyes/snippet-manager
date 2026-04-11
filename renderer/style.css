@@ -481,6 +481,7 @@ body { display: flex; }
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
   -webkit-app-region: no-drag;
 }
 
@@ -1083,6 +1084,51 @@ body { display: flex; }
   border: 1px solid var(--border);
 }
 .btn-ghost:hover { border-color: var(--text-dim); color: var(--text); }
+
+/* ------------------------------------------------------------------ */
+/* Home back button                                                   */
+/* ------------------------------------------------------------------ */
+.btn-home {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius);
+  transition: all var(--transition);
+  color: var(--text-dim);
+  font-size: 13px;
+  font-family: inherit;
+}
+.btn-home:hover {
+  background: var(--surface);
+  color: var(--text);
+}
+.btn-home:hover .home-key-badge {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.home-key-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 7px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-dim);
+  transition: border-color var(--transition), color var(--transition);
+}
 
 /* ------------------------------------------------------------------ */
 /* Tooltips                                                           */
