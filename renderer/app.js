@@ -182,9 +182,9 @@ function renderList(filter = '') {
     const li = document.createElement('li');
     li.className = 'macro-item' + (i === selectedIndex ? ' active' : '');
 
-    const preview = stripHtml(macro.content).replace(/\n/g, ' ');
+    const preview = stripHtml(macro.content).replace(/\n/g, ' ').trim();
     if (preview.length > 0) {
-      li.setAttribute('data-tooltip', preview.length > 60 ? preview.slice(0, 60) + '\u2026' : preview);
+      li.setAttribute('data-tooltip', preview.length > 80 ? preview.slice(0, 80) + '\u2026' : preview);
     }
 
     li.innerHTML = `
@@ -254,7 +254,7 @@ async function saveCurrent() {
   data.snippets[selectedIndex] = {
     title: fieldTitle.value.trim() || 'Untitled',
     abbr:  fieldAbbr.value.trim(),
-    content: fieldContent.innerHTML,
+    content: fieldContent.innerText || fieldContent.textContent,
   };
 
   await persist();
@@ -294,17 +294,20 @@ async function persist() {
 // ---------------------------------------------------------------------------
 // Copy button
 // ---------------------------------------------------------------------------
+const COPY_ICON_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M17 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>';
+const CHECK_ICON_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
 function copyContent() {
   const text = stripHtml(fieldContent.innerHTML);
   navigator.clipboard.writeText(text).then(() => {
     btnCopy.classList.add('copied');
-    btnCopy.querySelector('.copy-icon').textContent = '\u2713';
-    btnCopy.setAttribute('data-tooltip', 'Copied!');
+    btnCopy.querySelector('.copy-icon').innerHTML = CHECK_ICON_SVG;
+    btnCopy.querySelector('.copy-label').textContent = 'Copied!';
 
     setTimeout(() => {
       btnCopy.classList.remove('copied');
-      btnCopy.querySelector('.copy-icon').textContent = '\u2398';
-      btnCopy.setAttribute('data-tooltip', 'Copy');
+      btnCopy.querySelector('.copy-icon').innerHTML = COPY_ICON_SVG;
+      btnCopy.querySelector('.copy-label').textContent = 'Copy';
     }, 1500);
   });
 }
@@ -313,6 +316,7 @@ function copyContent() {
 // Prefix change modal
 // ---------------------------------------------------------------------------
 function openPrefixModal() {
+  document.getElementById('modal-prefix-display').textContent = data.prefix || '/';
   prefixModal.classList.remove('hidden');
   document.addEventListener('keydown', handlePrefixKey);
 }
@@ -329,13 +333,18 @@ function handlePrefixKey(e) {
   if (e.key.length !== 1) return;
   if (/[a-zA-Z0-9]/.test(e.key)) return;
 
+  // Show the new prefix in the badge before closing
+  document.getElementById('modal-prefix-display').textContent = e.key;
+
   data.prefix = e.key;
   updatePrefixDisplay();
   updateEditorHeader();
   persist();
   renderList(searchInput.value);
   if (showingDefaults) renderDefaultsPage();
-  closePrefixModal();
+
+  // Brief pause so the badge update is visible before the modal exits
+  setTimeout(closePrefixModal, 160);
 }
 
 // ---------------------------------------------------------------------------

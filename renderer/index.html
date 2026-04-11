@@ -23,6 +23,7 @@
         <span class="listener-label">Listener active</span>
       </div>
 
+      <div class="search-divider"></div>
       <div class="search-wrap">
         <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="search" placeholder="Search macros..." autocomplete="off" />
@@ -50,7 +51,6 @@
           <svg class="settings-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         </button>
       </div>
-      <div class="footer-divider"></div>
       <button id="btn-new" class="btn-new" data-tooltip="Add a new macro">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         New Macro
@@ -91,17 +91,24 @@
         </div>
 
         <div class="form-row content-row">
-          <label>Content</label>
-          <div class="toolbar">
-            <button class="tool-btn" data-cmd="bold" data-tooltip="Bold"><b>B</b></button>
-            <button class="tool-btn" data-cmd="italic" data-tooltip="Italic"><i>I</i></button>
-            <button class="tool-btn" data-cmd="underline" data-tooltip="Underline"><u>U</u></button>
+          <div class="content-row-header">
+            <label>Content</label>
+            <div class="toolbar-copy-row">
+              <div class="toolbar">
+                <button class="tool-btn" data-cmd="bold" data-tooltip="Bold"><b>B</b></button>
+                <button class="tool-btn" data-cmd="italic" data-tooltip="Italic"><i>I</i></button>
+                <button class="tool-btn" data-cmd="underline" data-tooltip="Underline"><u>U</u></button>
+              </div>
+              <button id="btn-copy" class="btn-copy">
+                <span class="copy-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M17 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+                </span>
+                <span class="copy-label">Copy</span>
+              </button>
+            </div>
           </div>
           <div class="content-wrap">
             <div id="field-content" class="content-editor" contenteditable="true" spellcheck="true"></div>
-            <button id="btn-copy" class="btn-copy" data-tooltip="Copy">
-              <span class="copy-icon">&#9112;</span>
-            </button>
           </div>
         </div>
       </div>
@@ -128,10 +135,11 @@
 
   <!-- Prefix change modal -->
   <div id="prefix-modal" class="modal-overlay hidden">
-    <div class="modal">
-      <div class="modal-title">Press a key...</div>
-      <div class="modal-desc">Type any non-alphanumeric character to set as your trigger prefix.</div>
-      <button class="modal-cancel" id="prefix-cancel">Cancel</button>
+    <div class="modal prefix-modal">
+      <div class="modal-prefix-badge" id="modal-prefix-display">/</div>
+      <div class="prefix-modal-title">pick your trigger</div>
+      <div class="prefix-modal-desc">type any symbol to set it as your shortcut prefix. something like / ; or . works great</div>
+      <button class="modal-cancel" id="prefix-cancel">cancel</button>
     </div>
   </div>
 
