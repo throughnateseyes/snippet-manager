@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain, clipboard, globalShortcut, dialog, Tray, Menu, nativeImage } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
 const { uIOhook, UiohookKey } = require('uiohook-napi');
@@ -501,11 +502,46 @@ function updateTrayMenu() {
 }
 
 // ---------------------------------------------------------------------------
+// Auto-updater — only active in packaged builds, silent in dev
+// ---------------------------------------------------------------------------
+function initAutoUpdater() {
+  if (!app.isPackaged) return;
+
+  autoUpdater.autoDownload = true;
+  autoUpdater.autoInstallOnAppQuit = true;
+
+  autoUpdater.on('update-downloaded', () => {
+    dialog.showMessageBox({
+      type: 'info',
+      title: 'Update Ready',
+      message: 'A new version of Macro Manager is ready to install.',
+      detail: 'Restart now to apply the update, or it will be applied next time you launch.',
+      buttons: ['Restart Now', 'Later'],
+      defaultId: 0,
+      cancelId: 1,
+    }).then(({ response }) => {
+      if (response === 0) {
+        isQuitting = true;
+        autoUpdater.quitAndInstall();
+      }
+    });
+  });
+
+  autoUpdater.on('error', (err) => {
+    console.error('[updater]', err.message);
+  });
+
+  // Delay check by 5s so the app fully launches before network activity
+  setTimeout(() => autoUpdater.checkForUpdates(), 5000);
+}
+
+// ---------------------------------------------------------------------------
 // App lifecycle
 // ---------------------------------------------------------------------------
 app.whenReady().then(() => {
   createWindow();
   createTrayIcon();
+  initAutoUpdater();
   uIOhook.start();
 
   // Global shortcut to toggle window: Cmd+Shift+M (Mac) / Ctrl+Shift+M (Win)

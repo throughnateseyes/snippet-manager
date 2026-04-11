@@ -1,6 +1,6 @@
 {
   "name": "macro-manager",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Cross-platform macro/text expansion manager",
   "main": "main.js",
   "scripts": {
@@ -12,13 +12,26 @@
   "build": {
     "appId": "com.macromanager.app",
     "productName": "Macro Manager",
+    "afterPack": "./afterPack.js",
+    "directories": {
+      "output": "/tmp/macro-manager-dist"
+    },
     "files": [
       "main.js",
       "preload.js",
-      "renderer/**/*"
+      "renderer/**/*",
+      "build/**/*"
     ],
+    "publish": {
+      "provider": "github",
+      "owner": "throughnateseyes",
+      "repo": "macro-manager"
+    },
     "mac": {
-      "target": "dmg",
+      "target": [
+        { "target": "dmg", "arch": ["x64", "arm64"] },
+        { "target": "zip", "arch": ["x64", "arm64"] }
+      ],
       "category": "public.app-category.productivity"
     },
     "win": {
@@ -34,6 +47,7 @@
     "electron-builder": "^25.1.8"
   },
   "dependencies": {
+    "electron-updater": "^6.8.3",
     "uiohook-napi": "^1.5.4"
   }
 }
