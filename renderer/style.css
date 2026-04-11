@@ -442,6 +442,34 @@ body { display: flex; }
   color: rgba(255,255,255,0.35);
 }
 
+.settings-data-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 8px;
+  margin-bottom: 2px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: rgba(255,255,255,0.55);
+  font-family: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+.settings-data-btn:hover {
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.9);
+}
+.settings-data-btn.success {
+  color: #4caf82;
+}
+.settings-data-btn.error {
+  color: #e05252;
+}
+
 /* Settings dark-mode toggle switch */
 .settings-toggle {
   position: relative;
@@ -481,7 +509,6 @@ body { display: flex; }
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  position: relative;
   -webkit-app-region: no-drag;
 }
 
@@ -747,7 +774,15 @@ body { display: flex; }
 .editor-title-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
+}
+
+.editor-title-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
 }
 
 .editor-heading {
@@ -790,6 +825,14 @@ body { display: flex; }
 .defaults-page-header {
   padding-top: 32px;
   margin-bottom: 4px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.defaults-page-header-left {
+  min-width: 0;
 }
 
 .defaults-page-title {
@@ -1037,7 +1080,7 @@ body { display: flex; }
 /* Action buttons */
 
 .btn {
-  padding: 8px 20px;
+  padding: 10px 24px;
   border: none;
   border-radius: var(--radius);
   font-family: inherit;
@@ -1047,8 +1090,15 @@ body { display: flex; }
   transition: all var(--transition);
 }
 
-.btn-primary { background: var(--accent); color: #fff; }
-.btn-primary:hover { background: var(--accent-hover); }
+.btn-primary {
+  background: transparent;
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+}
+.btn-primary:hover {
+  background: var(--accent);
+  color: #fff;
+}
 
 .btn-danger {
   background: transparent;
@@ -1059,23 +1109,22 @@ body { display: flex; }
 
 /* Trash icon button */
 .btn-icon-delete {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
-  border: none;
-  border-radius: 6px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
   color: var(--text-dim);
   cursor: pointer;
   transition: all var(--transition);
-  opacity: 0.6;
 }
 .btn-icon-delete:hover {
-  opacity: 1;
   color: var(--danger);
-  background: rgba(255, 80, 80, 0.15);
+  border-color: var(--danger);
+  background: rgba(255, 80, 80, 0.1);
 }
 
 .btn-ghost {
@@ -1089,13 +1138,10 @@ body { display: flex; }
 /* Home back button                                                   */
 /* ------------------------------------------------------------------ */
 .btn-home {
-  position: absolute;
-  top: 16px;
-  right: 24px;
-  z-index: 10;
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
   background: transparent;
   border: none;
   cursor: pointer;

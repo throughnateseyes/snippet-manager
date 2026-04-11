@@ -97,6 +97,7 @@ const prefixBadge       = document.getElementById('prefix-badge');
 const prefixKey         = document.getElementById('prefix-key');
 const btnNew            = document.getElementById('btn-new');
 const btnHome           = document.getElementById('btn-home');
+const btnHomeDefaults   = document.getElementById('btn-home-defaults');
 const btnSave           = document.getElementById('btn-save');
 const btnDelete         = document.getElementById('btn-delete');
 const btnCopy           = document.getElementById('btn-copy');
@@ -104,6 +105,10 @@ const btnSettings       = document.getElementById('btn-settings');
 const settingsPopover   = document.getElementById('settings-popover');
 const settingsThemeTgl  = document.getElementById('settings-theme-toggle');
 const settingsVersion   = document.getElementById('settings-version');
+const btnExport         = document.getElementById('btn-export');
+const btnExportLabel    = document.getElementById('btn-export-label');
+const btnImport         = document.getElementById('btn-import');
+const btnImportLabel    = document.getElementById('btn-import-label');
 const listenerStatus    = document.getElementById('listener-status');
 const navDefaults       = document.getElementById('nav-defaults');
 
@@ -118,8 +123,11 @@ const deleteCancel  = document.getElementById('delete-cancel');
 // Home button visibility
 // ---------------------------------------------------------------------------
 function setHomeButtonVisible(visible) {
-  if (visible) btnHome.classList.remove('hidden');
-  else         btnHome.classList.add('hidden');
+  [btnHome, btnHomeDefaults].forEach((btn) => {
+    if (!btn) return;
+    if (visible) btn.classList.remove('hidden');
+    else         btn.classList.add('hidden');
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -547,6 +555,44 @@ settingsThemeTgl.addEventListener('click', (e) => {
   toggleTheme();
 });
 
+// Export / Import
+function flashSettingsBtn(btn, labelEl, message, isError = false) {
+  const original = labelEl.textContent;
+  btn.classList.add(isError ? 'error' : 'success');
+  labelEl.textContent = message;
+  setTimeout(() => {
+    btn.classList.remove('error', 'success');
+    labelEl.textContent = original;
+  }, 2500);
+}
+
+btnExport.addEventListener('click', async (e) => {
+  e.stopPropagation();
+  const result = await window.macroAPI.exportMacros();
+  if (result.ok) {
+    flashSettingsBtn(btnExport, btnExportLabel, 'Exported!');
+  } else if (result.error) {
+    flashSettingsBtn(btnExport, btnExportLabel, 'Export failed', true);
+  }
+  // canceled: do nothing
+});
+
+btnImport.addEventListener('click', async (e) => {
+  e.stopPropagation();
+  const result = await window.macroAPI.importMacros();
+  if (result.ok) {
+    // Refresh local data and re-render immediately
+    data = result.data;
+    renderList(searchInput.value);
+    renderHomeScreen();
+    const msg = result.added === 1 ? 'Imported 1 macro!' : `Imported ${result.added} macros!`;
+    flashSettingsBtn(btnImport, btnImportLabel, msg);
+  } else if (result.error) {
+    flashSettingsBtn(btnImport, btnImportLabel, result.error.slice(0, 32), true);
+  }
+  // canceled: do nothing
+});
+
 // Close settings on outside click
 document.addEventListener('click', (e) => {
   if (settingsOpen && !settingsPopover.contains(e.target) && e.target !== btnSettings) {
@@ -572,8 +618,9 @@ prefixCancel.addEventListener('click', closePrefixModal);
 prefixModal.addEventListener('click', (e) => { if (e.target === prefixModal) closePrefixModal(); });
 deleteModal.addEventListener('click', (e) => { if (e.target === deleteModal) cancelDelete(); });
 
-// Home button
+// Home buttons
 btnHome.addEventListener('click', () => showEmpty());
+if (btnHomeDefaults) btnHomeDefaults.addEventListener('click', () => showEmpty());
 
 // Close modals / settings on Escape; navigate home if on a sub-page
 document.addEventListener('keydown', (e) => {

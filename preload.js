@@ -8,5 +8,7 @@ contextBridge.exposeInMainWorld('macroAPI', {
   version:         () => ipcRenderer.invoke('app:version'),
   incrementUsage:  (abbr) => ipcRenderer.invoke('macros:incrementUsage', abbr),
   getUsage:        () => ipcRenderer.invoke('macros:getUsage'),
+  exportMacros:    () => ipcRenderer.invoke('macros:export'),
+  importMacros:    () => ipcRenderer.invoke('macros:import'),
   platform: process.platform,
 });

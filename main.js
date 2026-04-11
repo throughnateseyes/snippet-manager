@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, clipboard, globalShortcut } = require('electron');
+const { app, BrowserWindow, ipcMain, clipboard, globalShortcut, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { uIOhook, UiohookKey } = require('uiohook-napi');
@@ -333,6 +333,53 @@ ipcMain.handle('macros:incrementUsage', (_event, abbr) => {
 ipcMain.handle('macros:getUsage', () => loadUsage());
 
 ipcMain.handle('macros:listenerStatus', () => listening);
+
+ipcMain.handle('macros:export', async () => {
+  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  const { filePath, canceled } = await dialog.showSaveDialog({
+    title: 'Export macros',
+    defaultPath: `macro-manager-backup-${today}.json`,
+    filters: [{ name: 'JSON', extensions: ['json'] }],
+  });
+  if (canceled || !filePath) return { ok: false };
+  try {
+    const content = fs.readFileSync(MACROS_PATH, 'utf-8');
+    fs.writeFileSync(filePath, content, 'utf-8');
+    return { ok: true };
+  } catch (err) {
+    console.error('[export] Failed:', err.message);
+    return { ok: false, error: err.message };
+  }
+});
+
+ipcMain.handle('macros:import', async () => {
+  const { filePaths, canceled } = await dialog.showOpenDialog({
+    title: 'Import macros',
+    filters: [{ name: 'JSON', extensions: ['json'] }],
+    properties: ['openFile'],
+  });
+  if (canceled || !filePaths.length) return { ok: false };
+  try {
+    const incoming = JSON.parse(fs.readFileSync(filePaths[0], 'utf-8'));
+    if (!Array.isArray(incoming.snippets)) {
+      return { ok: false, error: 'Invalid file — no snippets array found.' };
+    }
+    // Merge: skip any abbreviation that already exists in the current data
+    const current = loadMacros();
+    const existingAbbrs = new Set(current.snippets.map((s) => s.abbr.toLowerCase()));
+    const toAdd = incoming.snippets.filter(
+      (s) => s.abbr && !existingAbbrs.has(s.abbr.toLowerCase())
+    );
+    const merged = { ...current, snippets: [...current.snippets, ...toAdd] };
+    saveMacros(merged);
+    macrosCache = merged;
+    console.log(`[import] Added ${toAdd.length} snippets (${incoming.snippets.length - toAdd.length} skipped as duplicates)`);
+    return { ok: true, added: toAdd.length, data: merged };
+  } catch (err) {
+    console.error('[import] Failed:', err.message);
+    return { ok: false, error: err.message };
+  }
+});
 
 ipcMain.handle('app:version', () => app.getVersion());
 

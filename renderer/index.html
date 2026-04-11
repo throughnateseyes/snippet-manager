@@ -60,11 +60,6 @@
 
   <!-- Editor / Right Panel -->
   <main id="editor">
-    <!-- Home back button — shown on macro form and defaults page, hidden on home screen -->
-    <button class="btn-home hidden" id="btn-home">
-      <span class="home-key-badge">esc</span>
-      <span class="home-label">Home</span>
-    </button>
     <!-- Home screen -->
     <div id="editor-empty">
       <div class="home-screen">
@@ -111,8 +106,14 @@
       <!-- Fixed header -->
       <div class="editor-header" id="editor-header">
         <div class="editor-title-row">
-          <h2 class="editor-heading" id="editor-heading">Untitled</h2>
-          <span class="editor-subtitle" id="editor-subtitle">/abbr</span>
+          <div class="editor-title-left">
+            <h2 class="editor-heading" id="editor-heading">Untitled</h2>
+            <span class="editor-subtitle" id="editor-subtitle">/abbr</span>
+          </div>
+          <button class="btn-home hidden" id="btn-home">
+            <span class="home-key-badge">esc</span>
+            <span class="home-label">Home</span>
+          </button>
         </div>
       </div>
 
@@ -166,8 +167,14 @@
     <!-- Default Snippets full page -->
     <div id="defaults-page" class="hidden">
       <div class="defaults-page-header">
-        <h2 class="defaults-page-title">Default Snippets</h2>
-        <p class="defaults-page-subtitle">Read-only macros built into Macro Manager</p>
+        <div class="defaults-page-header-left">
+          <h2 class="defaults-page-title">Default Snippets</h2>
+          <p class="defaults-page-subtitle">Read-only macros built into Macro Manager</p>
+        </div>
+        <button class="btn-home hidden" id="btn-home-defaults">
+          <span class="home-key-badge">esc</span>
+          <span class="home-label">Home</span>
+        </button>
       </div>
       <div class="defaults-page-divider"></div>
       <div id="defaults-page-list" class="defaults-page-list"></div>
@@ -211,6 +218,16 @@
         <span class="settings-toggle-knob"></span>
       </button>
     </div>
+    <div class="settings-section-divider"></div>
+    <div class="settings-section-label">Data</div>
+    <button id="btn-export" class="settings-data-btn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <span id="btn-export-label">Export macros</span>
+    </button>
+    <button id="btn-import" class="settings-data-btn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 16 12 21 17 16"/><line x1="12" y1="21" x2="12" y2="3"/></svg>
+      <span id="btn-import-label">Import macros</span>
+    </button>
     <div class="settings-section-divider"></div>
     <div class="settings-section-label">About</div>
     <div class="settings-about" id="settings-version">Macro Manager v1.0.0</div>
