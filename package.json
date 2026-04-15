@@ -1,6 +1,6 @@
 {
   "name": "macro-manager",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Cross-platform macro/text expansion manager",
   "main": "main.js",
   "scripts": {
@@ -14,7 +14,7 @@
     "productName": "Macro Manager",
     "afterPack": "./afterPack.js",
     "directories": {
-      "output": "/tmp/macro-manager-dist"
+      "output": "release"
     },
     "files": [
       "main.js",
@@ -29,17 +29,20 @@
     },
     "mac": {
       "target": [
-        { "target": "dmg", "arch": ["x64", "arm64"] },
-        { "target": "zip", "arch": ["x64", "arm64"] }
+        { "target": "dmg", "arch": ["x64", "arm64"] }
       ],
       "category": "public.app-category.productivity"
     },
     "win": {
-      "target": "nsis"
+      "target": [
+        { "target": "nsis", "arch": ["x64"] }
+      ]
     },
     "nsis": {
-      "oneClick": true,
-      "perMachine": false
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false,
+      "deleteAppDataOnUninstall": false
     }
   },
   "devDependencies": {

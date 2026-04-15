@@ -415,13 +415,18 @@ function createWindow() {
     mainWindow.focus();
   });
 
-  // macOS: hide instead of close — app keeps running in tray
-  // Windows: let the window close and quit normally
+  // Hide to tray instead of closing on both Mac and Windows
   mainWindow.on('close', (e) => {
-    if (process.platform === 'darwin' && !isQuitting) {
+    if (!isQuitting) {
       e.preventDefault();
       mainWindow.hide();
-      app.dock.hide();
+      if (process.platform === 'darwin') app.dock.hide();
+      if (process.platform === 'win32' && tray) {
+        tray.displayBalloon({
+          title: 'Macro Manager',
+          content: 'Still running in the background. Click the tray icon to reopen.',
+        });
+      }
     }
   });
 }
@@ -481,7 +486,7 @@ function updateTrayMenu() {
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'Open Macro Manager',
+      label: 'Show Macro Manager',
       click: () => showWindow(),
     },
     { type: 'separator' },
@@ -503,7 +508,7 @@ function updateTrayMenu() {
       label: 'Quit',
       click: () => {
         isQuitting = true;
-        app.quit();
+        app.exit(0);
       },
     },
   ]);
@@ -555,10 +560,17 @@ function initAutoUpdater() {
 // App lifecycle
 // ---------------------------------------------------------------------------
 app.whenReady().then(() => {
+  const isFirstLaunch = !fs.existsSync(USAGE_PATH);
   createWindow();
   createTrayIcon();
   initAutoUpdater();
   uIOhook.start();
+
+  // On first launch, make sure the window is visible so the user isn't confused
+  if (isFirstLaunch && mainWindow) {
+    mainWindow.show();
+    mainWindow.focus();
+  }
 
   // Global shortcut to toggle window: Cmd+Shift+M (Mac) / Ctrl+Shift+M (Win)
   const shortcut = process.platform === 'darwin' ? 'CommandOrControl+Shift+M' : 'Ctrl+Shift+M';
@@ -569,12 +581,9 @@ app.whenReady().then(() => {
   });
 });
 
-// macOS: keep running in tray when window is closed
-// Windows: quit the app when the window is closed
+// Never quit when all windows are closed — stay in tray on all platforms
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+  // Intentionally empty: app lives in the system tray on Mac and Windows
 });
 
 app.on('before-quit', () => {
