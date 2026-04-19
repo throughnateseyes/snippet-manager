@@ -209,6 +209,12 @@ function renderList(filter = '') {
   const q = filter.toLowerCase();
   macroList.innerHTML = '';
 
+  // Update section label with live count
+  const sectionLabel = document.querySelector('.section-label');
+  if (sectionLabel) {
+    sectionLabel.textContent = `My Macros · ${data.snippets.length}`;
+  }
+
   data.snippets.forEach((macro, i) => {
     const matchesFilter =
       !q ||
@@ -290,30 +296,34 @@ async function renderHomeScreen() {
   // Workspace header
   document.getElementById('home-date').textContent = 'Your Workspace';
 
-  // Stats — total macros
-  document.getElementById('stat-total').textContent = data.snippets.length;
-
   // Usage data
   let usage = {};
   try { usage = await window.macroAPI.getUsage(); } catch { /* not in Electron */ }
 
-  // Total expansions
+  // Card 1 — Times Expanded
   const totalExp = Object.values(usage).reduce((sum, n) => sum + n, 0);
   document.getElementById('stat-expansions').textContent = totalExp.toLocaleString();
 
-  // Most-used macro
+  // Card 2 — Most Used (prefix + abbr)
   let topAbbr = null, topCount = 0;
   for (const [abbr, count] of Object.entries(usage)) {
     if (count > topCount) { topCount = count; topAbbr = abbr; }
   }
   const topMacro = topAbbr ? data.snippets.find((s) => s.abbr === topAbbr) : null;
-  if (topMacro) {
-    document.getElementById('stat-top-name').textContent = topMacro.title || topMacro.abbr;
-    document.getElementById('stat-top-label').textContent = `${topCount}× · Most Used`;
+  document.getElementById('stat-top-name').textContent = topMacro
+    ? (data.prefix || '/') + topMacro.abbr
+    : '—';
+
+  // Card 3 — Time Saved (30 sec per expansion)
+  const savedSeconds = totalExp * 30;
+  const savedMinutes = savedSeconds / 60;
+  let timeSavedText;
+  if (savedMinutes < 60) {
+    timeSavedText = Math.round(savedMinutes) + ' min';
   } else {
-    document.getElementById('stat-top-name').textContent = '—';
-    document.getElementById('stat-top-label').textContent = 'Most Used';
+    timeSavedText = (savedMinutes / 60).toFixed(1) + ' hrs';
   }
+  document.getElementById('stat-time-saved').textContent = totalExp > 0 ? timeSavedText : '—';
 
   // Top 5 macros list
   const topMacrosEl = document.getElementById('home-top-macros');
@@ -342,7 +352,16 @@ async function renderHomeScreen() {
           <div class="top-macro-bar" style="width:${barPct}%"></div>
         </div>
         <span class="top-macro-count">${count}</span>
+        <span class="top-macro-arrow">›</span>
       `;
+
+      if (macro) {
+        const macroIndex = data.snippets.findIndex((s) => s.abbr === abbr);
+        if (macroIndex !== -1) {
+          row.classList.add('top-macro-row--clickable');
+          row.addEventListener('click', () => selectMacro(macroIndex));
+        }
+      }
 
       if (macro && macro.content) {
         const preview = stripHtml(macro.content).replace(/\n/g, ' ').trim();

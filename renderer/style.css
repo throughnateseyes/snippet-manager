@@ -103,7 +103,7 @@ body { display: flex; }
 .app-title {
   font-size: 15px;
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
   color: var(--text-bright);
   letter-spacing: -0.2px;
 }
@@ -527,29 +527,28 @@ body.light-mode #search:focus { background: rgba(0,0,0,0.04); }
   padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   min-width: 0;
   border: none;
 }
 
-/* Colored dot above each stat number */
+/* Dot + value inline row */
+.stat-top-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Colored dot left of stat number */
 .stat-dot {
   display: block;
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  margin-bottom: 2px;
   flex-shrink: 0;
 }
 
 /* Per-card tints and dot colors */
-.stat-card--macros {
-  background: rgba(92, 95, 239, 0.08);
-}
-.stat-card--macros .stat-dot {
-  background: #5c5fef;
-}
-
 .stat-card--expansions {
   background: rgba(76, 175, 130, 0.08);
 }
@@ -558,10 +557,18 @@ body.light-mode #search:focus { background: rgba(0,0,0,0.04); }
 }
 
 .stat-card--top {
-  background: rgba(255, 170, 50, 0.08);
+  background: rgba(245, 158, 11, 0.08);
 }
 .stat-card--top .stat-dot {
-  background: #ffaa32;
+  background: #f59e0b;
+}
+
+.stat-card--timesaved {
+  background: rgba(139, 92, 246, 0.08);
+  cursor: default;
+}
+.stat-card--timesaved .stat-dot {
+  background: #8b5cf6;
 }
 
 .stat-value {
@@ -608,7 +615,7 @@ body.light-mode #search:focus { background: rgba(0,0,0,0.04); }
 
 .top-macro-row {
   display: grid;
-  grid-template-columns: 180px 1fr 32px;
+  grid-template-columns: 180px 1fr 32px 16px;
   align-items: center;
   gap: 14px;
   padding: 9px 10px;
@@ -616,12 +623,29 @@ body.light-mode #search:focus { background: rgba(0,0,0,0.04); }
   transition: background var(--transition);
 }
 
-.top-macro-row:hover {
+.top-macro-row--clickable {
+  cursor: pointer;
+}
+
+.top-macro-row--clickable:hover {
   background: rgba(255, 255, 255, 0.04);
 }
 
-body.light-mode .top-macro-row:hover {
+body.light-mode .top-macro-row--clickable:hover {
   background: rgba(0, 0, 0, 0.03);
+}
+
+.top-macro-arrow {
+  font-size: 14px;
+  color: var(--text-dim);
+  opacity: 0;
+  transition: opacity var(--transition);
+  text-align: right;
+  line-height: 1;
+}
+
+.top-macro-row--clickable:hover .top-macro-arrow {
+  opacity: 0.5;
 }
 
 .top-macro-info {
@@ -724,15 +748,9 @@ body.light-mode .quick-card:hover {
 }
 
 /* Light mode: slightly more saturated card tints */
-body.light-mode .stat-card--macros {
-  background: rgba(92, 95, 239, 0.10);
-}
-body.light-mode .stat-card--expansions {
-  background: rgba(76, 175, 130, 0.10);
-}
-body.light-mode .stat-card--top {
-  background: rgba(255, 170, 50, 0.10);
-}
+body.light-mode .stat-card--expansions  { background: rgba(76, 175, 130, 0.10); }
+body.light-mode .stat-card--top         { background: rgba(245, 158, 11, 0.10); }
+body.light-mode .stat-card--timesaved   { background: rgba(139, 92, 246, 0.10); }
 
 /* Settings name input */
 .settings-row-col {
