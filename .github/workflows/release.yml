@@ -53,7 +53,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: false
-        run: electron-builder --mac --publish always
+        run: npx electron-builder --mac --publish always
 
       - name: Upload Mac artifacts
         uses: actions/upload-artifact@v4
@@ -82,7 +82,7 @@ jobs:
       - name: Build & Publish Windows
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: electron-builder --win --publish always
+        run: npx electron-builder --win --publish always
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
